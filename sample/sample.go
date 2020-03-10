@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"gitee.com/akimimi/getuigo"
 	"github.com/go-yaml/yaml"
 	"github.com/gogap/logs"
@@ -43,9 +42,7 @@ func main() {
 		if e := igetui.SendTransmissionByCid(config.Cid, &payload); e != nil {
 			logs.Error("Send to cid failed! cid=", config.Cid)
 		} else {
-			fmt.Println("Successfully send to cid ", config.Cid)
 			logs.Info("Successfully send to cid ", config.Cid)
-			logs.Info("info")
 		}
 	}
 	time.Sleep(50)
