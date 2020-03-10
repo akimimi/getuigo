@@ -7,10 +7,10 @@ import (
 )
 
 type GetuiConfig struct {
-	AppId        string `yaml:"appid"`
-	AppKey       string `yaml:"appkey"`
-	AppSecret    string `yaml:"appsecret"`
-	MasterSecret string `yaml:"mastersecret"`
+	AppId        string `json:"appid" yaml:"appid"`
+	AppKey       string `json:"appkey" yaml:"appkey"`
+	AppSecret    string `json:"appsecret" yaml:"appsecret"`
+	MasterSecret string `json:"mastersecret" yaml:"mastersecret"`
 }
 
 type BasicPayload struct {
