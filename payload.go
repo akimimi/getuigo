@@ -7,8 +7,13 @@ type Payload interface {
 	SetPushBody(body string)
 	GetIsShowNotify() int
 	SetIsShowNotify(isshow int)
-	GetExt() string
-	SetExt(ext string)
+}
+
+type BasicPayload struct {
+	PushTitle    string `json:"push_title"`
+	PushBody     string `json:"push_body"`
+	IsShowNotify int    `json:"is_show_notify"`
+	Ext          string `json:"ext"`
 }
 
 func (p *BasicPayload) GetPushTitle() string {
