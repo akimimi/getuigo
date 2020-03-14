@@ -13,13 +13,6 @@ type GetuiConfig struct {
 	MasterSecret string `json:"mastersecret" yaml:"mastersecret"`
 }
 
-type BasicPayload struct {
-	PushTitle    string `json:"push_title"`
-	PushBody     string `json:"push_body"`
-	IsShowNotify int    `json:"is_show_notify"`
-	Ext          string `json:"ext"`
-}
-
 func NewGeTui(config *GetuiConfig) (*GetuiPush, error) {
 	if config.AppId == "" || config.AppSecret == "" || config.AppKey == "" {
 		return nil, errors.New("Getui config is not provided.")
