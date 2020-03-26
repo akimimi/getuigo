@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/geek-go/getui"
 	"github.com/satori/go.uuid"
+	"math/rand"
 	"time"
 )
 
@@ -33,7 +34,7 @@ func (g *GetuiPush) SendTransmissionByCid(cid string, payload Payload) error {
 		Transmission: template,
 		Cid:          cid,
 		PushInfo:     pushInfo,
-		RequestId:    g.RequestId(),
+		RequestId:    g.RequestId(true),
 	}
 
 	res, err := getui.PushSingle(g.Config.AppId, token, pushSingleParam)
@@ -102,7 +103,7 @@ func (g *GetuiPush) SendTransmissionToAll(payload Payload, filter ...getui.AppCo
 		Transmission: template,
 		PushInfo:     pushInfo,
 		Condition:    &conditions,
-		RequestId:    g.RequestId(),
+		RequestId:    g.RequestId(false),
 	}
 
 	if res, err := getui.PushApp(g.Config.AppId, token, pushAppParam); err == nil {
@@ -138,13 +139,15 @@ func (g *GetuiPush) MergeAppConditions(filters ...getui.AppCondition) getui.Cond
 	return conditions
 }
 
-func (g *GetuiPush) RequestId() (s string) {
-	u2, err := uuid.NewV4()
-	if err != nil {
-		s = time.Now().Format("20160102150405")
-		defer logUnexpected(fmt.Sprintf("uuid can not be generated: %s instead", s))
-	} else {
-		s = u2.String()
+func (g *GetuiPush) RequestId(useUuid bool) (s string) {
+	rand.Seed(time.Now().UnixNano())
+	s = fmt.Sprintf("%s%6.0f", time.Now().Format("20190102150405"), float64(rand.Intn(999999)))
+	if useUuid {
+		if u2, err := uuid.NewV4(); err == nil {
+			s = u2.String()
+		} else {
+			defer logUnexpected(fmt.Sprintf("uuid can not be generated: %s instead", s))
+		}
 	}
 	return
 }
