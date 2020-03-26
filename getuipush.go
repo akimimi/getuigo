@@ -84,6 +84,59 @@ func (g *GetuiPush) SendTransmissionByCidList(cids []string, payload Payload) er
 	}
 }
 
+func (g *GetuiPush) SendTransmissionToAll(payload Payload, filter ...getui.AppCondition) error {
+	token, _ := getui.GetGeTuiToken(g.Config.AppId, g.Config.AppKey, g.Config.MasterSecret)
+	message := getui.GetMessage()
+	message.AppKey = g.Config.AppKey
+	message.MsgType = getui.MsgType.Transmission
+
+	template, pushInfo, err := IGtTransmissionTemplate(payload)
+	if err != nil {
+		return err
+	}
+
+	conditions := g.PushAppConditions(filter...)
+	pushAppParam := &getui.PushAppParam{
+		Message:      message,
+		Transmission: template,
+		PushInfo:     pushInfo,
+		Condition:    &conditions,
+		RequestId:    g.RequestId(),
+	}
+
+	if res, err := getui.PushApp(g.Config.AppId, token, pushAppParam); err == nil {
+		defer logAppPush(res)
+		return nil
+	} else {
+		return err
+	}
+}
+
+func (g *GetuiPush) PushAppConditions(filters ...getui.AppCondition) getui.Condition {
+	isPhoneTypeSet := false
+	conditions := g.MergeAppConditions(filters...)
+	for _, cond := range conditions {
+		if cond.Key == getui.PHONE_TYPE {
+			isPhoneTypeSet = true
+		}
+	}
+	if !isPhoneTypeSet {
+		conditions = append(conditions, getui.AppCondition{
+			Key:    getui.PHONE_TYPE,
+			Values: []string{"ANDROID", "IOS"},
+		})
+	}
+	return conditions
+}
+
+func (g *GetuiPush) MergeAppConditions(filters ...getui.AppCondition) getui.Condition {
+	conditions := getui.Condition{}
+	for _, cond := range filters {
+		conditions = append(conditions, cond)
+	}
+	return conditions
+}
+
 func (g *GetuiPush) RequestId() string {
 	return time.Now().Format("20160102150405")
 }

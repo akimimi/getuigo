@@ -29,3 +29,11 @@ func logListPush(rt *getui.PushListResult) string {
 	}
 	return str
 }
+
+func logAppPush(rt *getui.PushAppResult) string {
+	str := fmt.Sprintf("task: %s result: %s desc: %s", rt.Taskid, rt.Result, rt.Desc)
+	if LogType == LogStd {
+		defer logs.Info(str)
+	}
+	return str
+}

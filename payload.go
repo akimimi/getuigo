@@ -7,6 +7,7 @@ type Payload interface {
 	SetPushBody(body string)
 	GetIsShowNotify() int
 	SetIsShowNotify(isshow int)
+	String() string
 }
 
 type BasicPayload struct {
@@ -46,4 +47,8 @@ func (p *BasicPayload) GetExt() string {
 
 func (p *BasicPayload) SetExt(ext string) {
 	p.Ext = ext
+}
+
+func (p *BasicPayload) String() string {
+	return p.PushTitle
 }
