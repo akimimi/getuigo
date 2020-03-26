@@ -15,7 +15,8 @@ const (
 var LogType = LogNone
 
 func logSinglePush(rt *getui.PushSingleResult) string {
-	str := fmt.Sprintf("task: %s status: %s result: %s desc: %s", rt.TaskId, rt.Status, rt.Result, rt.Desc)
+	str := fmt.Sprintf("[Getui]task: %s status: %s result: %s desc: %s",
+		rt.TaskId, rt.Status, rt.Result, rt.Desc)
 	if LogType == LogStd {
 		defer logs.Info(str)
 	}
@@ -23,7 +24,8 @@ func logSinglePush(rt *getui.PushSingleResult) string {
 }
 
 func logListPush(rt *getui.PushListResult) string {
-	str := fmt.Sprintf("task: %s result: %s desc: %s", rt.Taskid, rt.Result, rt.Desc)
+	str := fmt.Sprintf("[Getui]task: %s result: %s desc: %s",
+		rt.Taskid, rt.Result, rt.Desc)
 	if LogType == LogStd {
 		defer logs.Info(str)
 	}
@@ -31,9 +33,18 @@ func logListPush(rt *getui.PushListResult) string {
 }
 
 func logAppPush(rt *getui.PushAppResult) string {
-	str := fmt.Sprintf("task: %s result: %s desc: %s", rt.Taskid, rt.Result, rt.Desc)
+	str := fmt.Sprintf("[Getui]task: %s result: %s desc: %s",
+		rt.Taskid, rt.Result, rt.Desc)
 	if LogType == LogStd {
 		defer logs.Info(str)
+	}
+	return str
+}
+
+func logUnexpected(str string) string {
+	str = fmt.Sprintf("[Getui]%s", str)
+	if LogType == LogStd {
+		defer logs.Error(str)
 	}
 	return str
 }

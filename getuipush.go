@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/geek-go/getui"
+	"github.com/satori/go.uuid"
 	"time"
 )
 
@@ -137,6 +138,13 @@ func (g *GetuiPush) MergeAppConditions(filters ...getui.AppCondition) getui.Cond
 	return conditions
 }
 
-func (g *GetuiPush) RequestId() string {
-	return time.Now().Format("20160102150405")
+func (g *GetuiPush) RequestId() (s string) {
+	u2, err := uuid.NewV4()
+	if err != nil {
+		s = time.Now().Format("20160102150405")
+		defer logUnexpected(fmt.Sprintf("uuid can not be generated: %s instead", s))
+	} else {
+		s = u2.String()
+	}
+	return
 }
