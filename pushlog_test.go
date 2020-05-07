@@ -12,7 +12,7 @@ func TestPushlog(t *testing.T) {
 	}
 
 	rt := logSinglePush(&res)
-	expected := "task: 12345 status: 1 result: OK desc: description"
+	expected := "[Getui]task: 12345 status: 1 result: OK desc: description"
 	if rt != expected {
 		t.Log("pushlog result is different from expected")
 		t.Fail()

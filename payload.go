@@ -1,36 +1,42 @@
 package getuigo
 
+const NotifyTypePayload = "0"
+const NotifyTypeIntent = "1"
+const NotifyTypeUrl = "2"
+
 type Payload interface {
-	GetPushTitle() string
-	SetPushTitle(title string)
-	GetPushBody() string
-	SetPushBody(body string)
+	GetNotifyTitle() string
+	SetNotifyTitle(title string)
+	GetNotifyBody() string
+	SetNotifyBody(body string)
 	GetIsShowNotify() int
 	SetIsShowNotify(isshow int)
+	GetIntent() string
+	SetIntent(intent string)
 	String() string
 }
 
 type BasicPayload struct {
-	PushTitle    string `json:"push_title"`
-	PushBody     string `json:"push_body"`
+	NotifyTitle  string `json:"push_title"`
+	NotifyBody   string `json:"push_body"`
 	IsShowNotify int    `json:"is_show_notify"`
 	Ext          string `json:"ext"`
 }
 
-func (p *BasicPayload) GetPushTitle() string {
-	return p.PushTitle
+func (p *BasicPayload) GetNotifyTitle() string {
+	return p.NotifyTitle
 }
 
-func (p *BasicPayload) SetPushTitle(title string) {
-	p.PushTitle = title
+func (p *BasicPayload) SetNotifyTitle(title string) {
+	p.NotifyTitle = title
 }
 
-func (p *BasicPayload) GetPushBody() string {
-	return p.PushBody
+func (p *BasicPayload) GetNotifyBody() string {
+	return p.NotifyBody
 }
 
-func (p *BasicPayload) SetPushBody(body string) {
-	p.PushBody = body
+func (p *BasicPayload) SetNotifyBody(body string) {
+	p.NotifyBody = body
 }
 
 func (p *BasicPayload) GetIsShowNotify() int {
@@ -39,6 +45,14 @@ func (p *BasicPayload) GetIsShowNotify() int {
 
 func (p *BasicPayload) SetIsShowNotify(isshow int) {
 	p.IsShowNotify = isshow
+}
+
+func (p *BasicPayload) GetIntent() string {
+	return ""
+}
+
+func (p *BasicPayload) SetIntent(_ string) {
+	// just do nothing
 }
 
 func (p *BasicPayload) GetExt() string {
@@ -50,5 +64,5 @@ func (p *BasicPayload) SetExt(ext string) {
 }
 
 func (p *BasicPayload) String() string {
-	return p.PushTitle
+	return p.NotifyTitle
 }

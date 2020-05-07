@@ -7,10 +7,11 @@ import (
 )
 
 type GetuiConfig struct {
-	AppId        string `json:"appid" yaml:"appid"`
-	AppKey       string `json:"appkey" yaml:"appkey"`
-	AppSecret    string `json:"appsecret" yaml:"appsecret"`
-	MasterSecret string `json:"mastersecret" yaml:"mastersecret"`
+	AppId          string `json:"appid" yaml:"appid"`
+	AppKey         string `json:"appkey" yaml:"appkey"`
+	AppSecret      string `json:"appsecret" yaml:"appsecret"`
+	MasterSecret   string `json:"mastersecret" yaml:"mastersecret"`
+	IntentTemplate string `json:"intent_template" yaml:"intent_template"`
 }
 
 func NewGeTui(config *GetuiConfig) (*GetuiPush, error) {
@@ -34,16 +35,27 @@ func IGtTransmissionTemplate(payload Payload) (*getui.Transmission, *getui.PushI
 		TransmissionContent: string(payloadByte),
 	}
 
+	if payload.GetIsShowNotify() == 1 {
+		// notify for multi mobile push service
+		template.Notify = &getui.Notify{
+			Title:   payload.GetNotifyTitle(),
+			Content: payload.GetNotifyBody(),
+			Intent:  payload.GetIntent(),
+			Type:    NotifyTypeIntent,
+		}
+	}
+
 	// config apns for ios devices
 	apn := getui.Apns{Category: "ACTIONABLE"}
 	if payload.GetIsShowNotify() == 1 {
 		alertmsg := &getui.Alert{}
-		alertmsg.Title = payload.GetPushTitle()
-		alertmsg.Body = payload.GetPushBody()
+		alertmsg.Title = payload.GetNotifyTitle()
+		alertmsg.Body = payload.GetNotifyBody()
 		apn.Alert = alertmsg
 		apn.Sound = ""
 		apn.AutoBadge = "+1" //角标
 		apn.ContentAvailable = 0
+
 	} else {
 		apn.Sound = "com.gexin.ios.silence"
 		apn.AutoBadge = "+0" //角标

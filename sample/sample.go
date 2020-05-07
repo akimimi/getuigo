@@ -30,8 +30,8 @@ func main() {
 
 	payload := SamplePayload{
 		BasicPayload: getuigo.BasicPayload{
-			PushTitle:    "title",
-			PushBody:     "body",
+			NotifyTitle:  "title",
+			NotifyBody:   "body",
 			IsShowNotify: 1,
 			Ext:          "",
 		},
