@@ -38,6 +38,6 @@ type BasicPayload struct {
 可以通过组合BasicPayload并实现Payload接口的方式定义属于业务的Payload。
 
 ### 示例
-sample中实现了调用示例。
+sample 中实现了调用示例。
 
 
