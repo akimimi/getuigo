@@ -1,4 +1,11 @@
-# getuigo
+getuigo
+==========
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/akimimi/getuigo.svg)](https://pkg.go.dev/github.com/akimimi/getuigo)
+[![Build Status](https://travis-ci.com/akimimi/getuigo.svg?branch=master)](https://travis-ci.com/akimimi/getuigo)
+[![Coverage Status](https://coveralls.io/repos/github/akimimi/getuigo/badge.svg?branch=master)](https://coveralls.io/github/akimimi/getuigo?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/akimimi/getuigo)](https://goreportcard.com/report/github.com/akimimi/getuigo)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ### 简介
 项目在github.com/geek-go/getui的基础上封装了个推的go语言SDK。
