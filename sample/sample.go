@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gitee.com/akimimi/getuigo"
+	"github.com/akimimi/getuigo"
 	"github.com/go-yaml/yaml"
 	"github.com/gogap/logs"
 	"io/ioutil"

@@ -1,4 +1,4 @@
-module gitee.com/akimimi/getuigo
+module github.com/akimimi/getuigo
 
 go 1.16
 
