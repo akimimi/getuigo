@@ -10,13 +10,43 @@ import (
 )
 
 type GetuiPush struct {
-	Config *GetuiConfig
+	Config          *GetuiConfig
+	Token           string
+	TokenExpires    time.Time
+	RequestTokenCnt int
+}
+
+func (g *GetuiPush) IsAuthTokenValid() bool {
+	return g.Token != "" && g.TokenExpires.After(time.Now())
+}
+
+func (g *GetuiPush) GetAuthToken() (string, error) {
+	if g.IsAuthTokenValid() { // using cache
+		return g.Token, nil
+	} else {
+		g.RequestTokenCnt++
+		token, err := getui.GetGeTuiToken(g.Config.AppId, g.Config.AppKey, g.Config.MasterSecret)
+		if err != nil {
+			g.Token = ""
+			return "", err
+		} else {
+			if token == "" {
+				g.Token = ""
+				return "", errors.New("Token empty, auth_overlimit might happens")
+			}
+			g.Token = token
+			g.TokenExpires = time.Now().Add(time.Hour * 12)
+			return token, nil
+		}
+	}
 }
 
 func (g *GetuiPush) SendTransmissionByCid(cid string, payload Payload) error {
-
 	// get auth token
-	token, _ := getui.GetGeTuiToken(g.Config.AppId, g.Config.AppKey, g.Config.MasterSecret)
+	token, errToken := g.GetAuthToken()
+	if errToken != nil {
+		return errors.New("[GetAuthToken]" + errToken.Error())
+	}
 
 	// build message body
 	message := getui.GetMessage()
@@ -47,15 +77,18 @@ func (g *GetuiPush) SendTransmissionByCid(cid string, payload Payload) error {
 }
 
 func (g *GetuiPush) SendTransmissionByCidList(cids []string, payload Payload) error {
+	token, errToken := g.GetAuthToken()
+	if errToken != nil {
+		return errors.New("[GetAuthToken]" + errToken.Error())
+	}
 
-	token, _ := getui.GetGeTuiToken(g.Config.AppId, g.Config.AppKey, g.Config.MasterSecret)
 	message := getui.GetMessage()
 	message.AppKey = g.Config.AppKey
 	message.MsgType = getui.MsgType.Transmission
 
 	template, pushInfo, err := IGtTransmissionTemplate(payload)
 	if err != nil {
-		return err
+		return errors.New("[TransTemplate]" + err.Error())
 	}
 
 	saveListBodyParam := &getui.SaveListBodyParam{
@@ -69,13 +102,13 @@ func (g *GetuiPush) SendTransmissionByCidList(cids []string, payload Payload) er
 		return err
 	}
 	if res.Result != "ok" {
-		return errors.New(fmt.Sprintf("获取contentId失败:%s,%s", res.Result, res.Desc))
+		return errors.New(fmt.Sprintf("[ContentId]%s,%s,%s", res.Result, res.Desc, token))
 	}
 
-	taskid := res.TaskId
+	taskId := res.TaskId
 	pushListParam := &getui.PushListParam{
 		Cid:        cids,
-		Taskid:     taskid,
+		Taskid:     taskId,
 		NeedDetail: true,
 	}
 	if res2, err := getui.PushList(g.Config.AppId, token, pushListParam); err == nil {
@@ -87,7 +120,10 @@ func (g *GetuiPush) SendTransmissionByCidList(cids []string, payload Payload) er
 }
 
 func (g *GetuiPush) SendTransmissionToAll(payload Payload, filter ...getui.AppCondition) error {
-	token, _ := getui.GetGeTuiToken(g.Config.AppId, g.Config.AppKey, g.Config.MasterSecret)
+	token, errToken := g.GetAuthToken()
+	if errToken != nil {
+		return errors.New("[GetAuthToken]" + errToken.Error())
+	}
 	message := getui.GetMessage()
 	message.AppKey = g.Config.AppKey
 	message.MsgType = getui.MsgType.Transmission
