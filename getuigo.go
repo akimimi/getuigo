@@ -14,13 +14,19 @@ type GetuiConfig struct {
 	IntentTemplate string `json:"intent_template" yaml:"intent_template"`
 }
 
+var getuiInstance *GetuiPush
+var buildInstanceCnt int
+
 func NewGeTui(config *GetuiConfig) (*GetuiPush, error) {
 	if config.AppId == "" || config.AppSecret == "" || config.AppKey == "" {
-		return nil, errors.New("Getui config is not provided.")
+		return nil, errors.New("getui config is not provided")
 	}
 
-	gt := &GetuiPush{Config: config}
-	return gt, nil
+	if getuiInstance == nil || config.AppId != getuiInstance.Config.AppId {
+		getuiInstance = &GetuiPush{Config: config}
+		buildInstanceCnt++
+	}
+	return getuiInstance, nil
 }
 
 func IGtTransmissionTemplate(payload Payload) (*getui.Transmission, *getui.PushInfo, error) {

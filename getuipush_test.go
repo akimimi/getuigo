@@ -91,3 +91,23 @@ func TestGetuiPush_IsAuthTokenValid(t *testing.T) {
 		t.Error("Token should be valid.")
 	}
 }
+
+func TestNewGeTui(t *testing.T) {
+	config := GetuiConfig{
+		AppId:        "yNLX9pFEWY9hA9KFGlj2n",
+		AppKey:       "eLP3QSCp3M7BMUM4WWOhj2",
+		AppSecret:    "XfcSQGmtbD6xjMMcpj94f7",
+		MasterSecret: "OU9YH3omlZ617Y3VEqUok1",
+	}
+	instance, err := NewGeTui(&config)
+	if instance == nil || err != nil {
+		t.Errorf("NewGetui failed, %v, error: %s", instance, err.Error())
+	}
+	if getuiInstance == nil {
+		t.Error("Static variable should not be nil.")
+	}
+	instance2, err := NewGeTui(&config)
+	if instance2 != instance || buildInstanceCnt > 1 {
+		t.Error("Instance should not be built again.")
+	}
+}
