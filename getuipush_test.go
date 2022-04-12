@@ -6,6 +6,13 @@ import (
 	"time"
 )
 
+var testConfig = GetuiConfig{
+	AppId:        "ZZtcVHjW2M7SeyKYuq9aF8",
+	AppKey:       "6c2Mp4Q0bX6Nn1JojavrW3",
+	AppSecret:    "AHgxvjDoX39iHsYloCzq4",
+	MasterSecret: "m006ZH1cAJ6MWOZkhavHE6",
+}
+
 func TestGetuiPush_RequestId(t *testing.T) {
 	getui := GetuiPush{}
 	rid := getui.RequestId(true)
@@ -20,6 +27,30 @@ func TestGetuiPush_RequestId(t *testing.T) {
 	}
 }
 
+func TestGetuiPush_SendTransmissionByCid(t *testing.T) {
+	payload := BasicPayload{
+		NotifyTitle:  "test",
+		NotifyBody:   "test",
+		IsShowNotify: 0,
+	}
+	getui := GetuiPush{Config: &testConfig}
+	if err := getui.SendTransmissionByCid("0c79f4391dc626a5480fa010777cedd2", &payload); err != nil {
+		t.Error(err)
+	}
+}
+
+func TestGetuiPush_SendTransmissionByCidWithNotify(t *testing.T) {
+	payload := BasicPayload{
+		NotifyTitle:  "test",
+		NotifyBody:   "test",
+		IsShowNotify: 1,
+	}
+	getui := GetuiPush{Config: &testConfig}
+	if err := getui.SendTransmissionByCid("0c79f4391dc626a5480fa010777cedd2", &payload); err != nil {
+		t.Error(err)
+	}
+}
+
 func TestGetuiPush_SendTransmissionByCidList(t *testing.T) {
 	payload := BasicPayload{
 		NotifyTitle:  "test",
@@ -28,27 +59,27 @@ func TestGetuiPush_SendTransmissionByCidList(t *testing.T) {
 	}
 
 	cids := []string{"0c79f4391dc626a5480fa010777cedd2"}
-	getui := GetuiPush{
-		Config: &GetuiConfig{
-			AppId:        "yNLX9pFEWY9hA9KFGlj2n",
-			AppKey:       "eLP3QSCp3M7BMUM4WWOhj2",
-			AppSecret:    "XfcSQGmtbD6xjMMcpj94f7",
-			MasterSecret: "OU9YH3omlZ617Y3VEqUok1",
-		}}
+	getui := GetuiPush{Config: &testConfig}
 	if err := getui.SendTransmissionByCidList(cids, &payload); err != nil {
 		t.Error(err)
-		t.Fail()
+	}
+}
+
+func TestGetuiPush_SendTransmissionToAll(t *testing.T) {
+	payload := BasicPayload{
+		NotifyTitle:  "test",
+		NotifyBody:   "test",
+		IsShowNotify: 0,
+	}
+
+	getui := GetuiPush{Config: &testConfig}
+	if err := getui.SendTransmissionToAll(&payload); err != nil {
+		t.Error(err)
 	}
 }
 
 func TestGetuiPush_GetAuthToken(t *testing.T) {
-	getui := GetuiPush{
-		Config: &GetuiConfig{
-			AppId:        "yNLX9pFEWY9hA9KFGlj2n",
-			AppKey:       "eLP3QSCp3M7BMUM4WWOhj2",
-			AppSecret:    "XfcSQGmtbD6xjMMcpj94f7",
-			MasterSecret: "OU9YH3omlZ617Y3VEqUok1",
-		}}
+	getui := GetuiPush{Config: &testConfig}
 	token, err := getui.GetAuthToken()
 	if getui.RequestTokenCnt != 1 {
 		t.Errorf("GetAuthToken should request 1 time, but actual %d times", getui.RequestTokenCnt)
@@ -67,13 +98,7 @@ func TestGetuiPush_GetAuthToken(t *testing.T) {
 }
 
 func TestGetuiPush_IsAuthTokenValid(t *testing.T) {
-	getui := GetuiPush{
-		Config: &GetuiConfig{
-			AppId:        "yNLX9pFEWY9hA9KFGlj2n",
-			AppKey:       "eLP3QSCp3M7BMUM4WWOhj2",
-			AppSecret:    "XfcSQGmtbD6xjMMcpj94f7",
-			MasterSecret: "OU9YH3omlZ617Y3VEqUok1",
-		}}
+	getui := GetuiPush{Config: &testConfig}
 	valid := getui.IsAuthTokenValid()
 	if valid != false {
 		t.Error("Empty token should be invalid.")
@@ -93,20 +118,14 @@ func TestGetuiPush_IsAuthTokenValid(t *testing.T) {
 }
 
 func TestNewGeTui(t *testing.T) {
-	config := GetuiConfig{
-		AppId:        "yNLX9pFEWY9hA9KFGlj2n",
-		AppKey:       "eLP3QSCp3M7BMUM4WWOhj2",
-		AppSecret:    "XfcSQGmtbD6xjMMcpj94f7",
-		MasterSecret: "OU9YH3omlZ617Y3VEqUok1",
-	}
-	instance, err := NewGeTui(&config)
+	instance, err := NewGeTui(&testConfig)
 	if instance == nil || err != nil {
 		t.Errorf("NewGetui failed, %v, error: %s", instance, err.Error())
 	}
 	if getuiInstance == nil {
 		t.Error("Static variable should not be nil.")
 	}
-	instance2, err := NewGeTui(&config)
+	instance2, err := NewGeTui(&testConfig)
 	if instance2 != instance || buildInstanceCnt > 1 {
 		t.Error("Instance should not be built again.")
 	}
