@@ -179,7 +179,9 @@ func (g *GetuiPush) RequestId(useUuid bool) (s string) {
 	rand.Seed(time.Now().UnixNano())
 	s = fmt.Sprintf("%s%6.0f", time.Now().Format("20190102150405"), float64(rand.Intn(999999)))
 	if useUuid {
-		s = uuid.NewV4().String()
+		if u, e := uuid.NewV4(); e == nil {
+			s = u.String()
+		}
 	}
 	return
 }
